@@ -146,22 +146,22 @@ a:hover, a:focus, a:active {
   color: #824027;
 }
 
-.artwork1 {
+#artwork1 {
 	width: 314px;
 	height: 550px;
 }
 
-.artwork2 {
+#artwork2 {
 	width: 314px;
 	height: 550px;
 }
 
-.artwork1 {
+#artwork3 {
 	width: 304px;
 	height: 88px;
 }
 
-.artwork1 {
+#artwork4 {
 	width: 159px;
 	height: 88px;
 }
