@@ -145,3 +145,23 @@ a {
 a:hover, a:focus, a:active {
   color: #824027;
 }
+
+.artwork1 {
+	width: 314px;
+	height: 550px;
+}
+
+.artwork2 {
+	width: 314px;
+	height: 550px;
+}
+
+.artwork1 {
+	width: 304px;
+	height: 88px;
+}
+
+.artwork1 {
+	width: 159px;
+	height: 88px;
+}
