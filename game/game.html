@@ -1,0 +1,727 @@
+<!--- 
+COMP284 - Assignment 3
+Adam Hawkins
+201155225
+--->
+<html>
+	<head>
+		<title>COMP284 - Assignment 3</title>
+		<link href="style.css"  rel="stylesheet"/>
+		<script>
+			var set = { //stating numner of rows and columns and the width and height of each tile
+				rows: 10, cols: 10, width: 50, height: 50
+			};
+			
+			var grid; //var for the grid
+			var fuel = 10; //var for the fuel starting at 10
+			var round = 0; //var for the rounds starting at 0
+			var score = 0; //var for the score starting at 0
+			var compScore = 0; //var for the comp score starting at 0
+			var fuelPlaced = 0; //var for the number of fuel cells placed starting at 0
+		
+			window.onload = function() { //when the page is loaded the grid will be drawn to a canvas
+				var canvas = document.getElementById("game");
+				grid = canvas.getContext("2d");
+				init(); //calling init function
+			}
+			
+			var mouseX, mouseY; //vars for the mouse position
+			var clickX, clickY; //vars for the click position
+			var chosenX, chosenY; //vars for the clicked tiles
+			var click = false; //boolean to check whether there has been a click or not
+			
+			var tileCoor = new Array(set.rows); //2d array for the clicked tile
+			for (t = 0; t < set.rows; t++) {
+				tileCoor[t] = new Array(set.cols);
+			}
+			
+			var subPlaced = false; //boolean to check whether a user sub has been placed or not
+			var subX, subY; //vars for the subs position
+			var enemyX, enemyY;	//vars for the enemy subs position
+			var obstacleX, obstacleY; //vars for the obstacles position
+			var fuel1X, fuel1Y, fuel2X, fuel2Y, fuel3X, fuel3Y, fuel4X, fuel4Y, fuel5X, fuel5Y, fuel6X, fuel6Y, fuel7X, fuel7Y, fuel8X, fuel8Y, fuel9X, fuel9Y; //vars for all of the fuel cells positions
+
+			var gameStart = false; //boolean to check whether the game has been started or not
+			
+			window.onclick = function(e) { //function for when a click is detected
+				mouseX = e.pageX; //setting the position of the mouses x coordinate
+				mouseY = e.pageY; //setting the position of the mouses y coordinate
+				if (gameStart == true) {} //if the game has been started to nothing with the click
+				else if (Math.floor(mouseX/set.width) < set.cols && Math.floor(mouseY/set.height) < set.rows) { //if the click is inside the grid
+					clickX = Math.floor(mouseX/set.width); //set the click x value 
+					clickY = Math.floor(mouseY/set.height); //set the click y value
+					click = true; //detect that a click has been made
+					tileCoor[clickX][clickY] = true; //specify which tile has been clicked
+					drawCanvas(); //draw a new canvas
+				}
+			}
+			
+			var tile, sub, enemy, obstacle, choose; //vars for the tile images
+			tile = new Image(); //empty tile
+			tile.src = "tile.png"; 		
+			sub = new Image(); //sub tile
+			sub.src = "sub.png";			
+			enemy = new Image(); //enemy tile
+			enemy.src = "enemy.png";			
+			obstacle = new Image(); //obstacle tile
+			obstacle.src = "obstacle.png";			
+			choose = new Image(); //clicked tile
+			choose.src = "choose.png";
+			
+			var fuel1, fuel2, fuel3, fuel4, fuel5, fuel6, fuel7, fuel8, fuel9; //vars for the fuel images
+			fuel1 = new Image(); //fuel 1 tile
+			fuel1.src = "fuel1.png";
+			fuel2 = new Image(); //fuel 2 tile
+			fuel2.src = "fuel2.png";
+			fuel3 = new Image(); //fuel 3 tile
+			fuel3.src = "fuel3.png";
+			fuel4 = new Image(); //fuel 4 tile
+			fuel4.src = "fuel4.png";
+			fuel5 = new Image(); //fuel 5 tile
+			fuel5.src = "fuel5.png";
+			fuel6 = new Image(); //fuel 6 tile
+			fuel6.src = "fuel6.png";
+			fuel7 = new Image(); //fuel 7 tile
+			fuel7.src = "fuel7.png";
+			fuel8 = new Image(); //fuel 8 tile
+			fuel8.src = "fuel8.png";
+			fuel9 = new Image(); //fuel 9 tile
+			fuel9.src = "fuel9.png";
+			
+			function init() { //initialising the board
+				document.getElementById("fuel").innerHTML = fuel; //writing the fuel amount
+				document.getElementById("round").innerHTML = round; //writing the round number
+				document.getElementById("score").innerHTML = score; //writing the score amount
+				document.getElementById("compScore").innerHTML = compScore; //writing the comp score amount
+				drawCanvas(); //calling drawCanvas function
+			}
+			
+			var i, j, x, y; //var for looping, and the coordinates
+			
+			function drawCanvas() { //drawing the canvas
+				grid.clearRect(0,0,500,500); //clearing the canvas
+				for(i = 0; i < set.rows; i++) { //for the number of rows
+					for(j = 0; j < set.cols; j++) { //for the number of columns
+						x = j * set.width; //finding which row to draw tile
+						y = i * set.height; //finding which column to draw tile
+						grid.drawImage(tile, x, y); //drawing tile
+						drawTile(); //calling drawTile function
+					}
+				}
+			}
+			
+			function drawTile() { //drawing each tile
+				if (tileCoor[j][i] == false) { //if the tile is not clicked
+					grid.drawImage(tile, x, y); //draw empty tile
+				} 
+				if (tileCoor[j][i] == true) { //if the tile is clicked
+					chosenX = x; //set the clicked x coordinate
+					chosenY = y; //set the clicked y coordinate
+					grid.drawImage(choose, x, y); //draw clicked tile
+					tileCoor[j][i] = false; //set that it is no longer clicked
+				}
+				grid.drawImage(sub, subX, subY); //drawing sub cell if placed
+				grid.drawImage(enemy, enemyX, enemyY); //drawing enemy cell if placed
+				grid.drawImage(obstacle, obstacleX, obstacleY); //drawing obstacle cell if placed
+				grid.drawImage(fuel1, fuel1X, fuel1Y); //drawing fuel1 cell if placed
+				grid.drawImage(fuel2, fuel2X, fuel2Y); //drawing fuel2 cell if placed
+				grid.drawImage(fuel3, fuel3X, fuel3Y); //drawing fuel3 cell if placed
+				grid.drawImage(fuel4, fuel4X, fuel4Y); //drawing fuel4 cell if placed
+				grid.drawImage(fuel5, fuel5X, fuel5Y); //drawing fuel5 cell if placed
+				grid.drawImage(fuel6, fuel6X, fuel6Y); //drawing fuel6 cell if placed
+				grid.drawImage(fuel7, fuel7X, fuel7Y); //drawing fuel7 cell if placed
+				grid.drawImage(fuel8, fuel8X, fuel8Y); //drawing fuel8 cell if placed
+				grid.drawImage(fuel9, fuel9X, fuel9Y); //drawing fuel9 cell if placed
+			}
+			
+			var wrongKey = false; //var to detect if invalid key is pressed
+			var edge = false; //var to detect if cell is next to a wall or obstacle
+			
+			document.onkeydown = function checkKey(e) { //detecting whether a key is pressed down
+				if (e.keyCode == '85') { //if the U key is pressed
+					if (subPlaced == true) { //if a sub has already been placed
+						error(); //call error function
+					}
+					else if (click == true) { //if the grid has been clicked
+						grid.drawImage(sub, chosenX, chosenY); //draw the sub at clicked tile
+						subX = chosenX; //set the subs x coordinate
+						subY = chosenY; //set the subs y coordinate
+						subPlaced = true; //set that a sub has been placed
+						click = false; //set click to false
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '75') { //if the K key has been pressed
+					if (click == true) { //if the grid has been clicked
+						grid.drawImage(enemy, chosenX, chosenY); //draw the enemy at clicked tile
+						enemyX = chosenX; //set the enemys x coordinate
+						enemyY = chosenY;	//set the enemys y coordinate
+						click = false; //set click to false
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '79') { //if the O key has been pressed
+					if (click == true) { //if the grid has been clicked
+						grid.drawImage(obstacle, chosenX, chosenY); //draw the obstacle at clicked tile
+						obstacleX = chosenX; //set obstacles x coordinate
+						obstacleY = chosenY; //set obstacles y coordinate
+						click = false; //set click to false
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '49') { //if the 1 key has been pressed
+					if (click == true) { //if the grid has been clicked
+						grid.drawImage(fuel1, chosenX, chosenY); //draw the fuel1 cell at clicked tile
+						fuel1X = chosenX; //set fuel1 x coordinate
+						fuel1Y = chosenY; //set fuel1 y coordinate
+						fuelPlaced = fuelPlaced + 1; //increment number of fuel cells placed
+						click = false; //set click to false
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '50') { //if the 2 key has been pressed
+					if (click == true) { //if the grid has been clicked
+						grid.drawImage(fuel2, chosenX, chosenY); //draw the fuel2 cell at clicked tile
+						fuel2X = chosenX; //set fuel2 x coordinate
+						fuel2Y = chosenY; //set fuel2 y coordinate
+						fuelPlaced = fuelPlaced + 1; //increment number of fuel cells placed
+						click = false; //set click to false
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '51') { //if the 3 key has been pressed
+					if (click == true) { //if the grid has been clicked
+						grid.drawImage(fuel3, chosenX, chosenY); //draw the fuel3 cell at clicked tile
+						fuel3X = chosenX; //set fuel3 x coordinate
+						fuel3Y = chosenY; //set fuel3 y coordinate
+						fuelPlaced = fuelPlaced + 1; //increment number of fuel cells placed
+						click = false; //set click to false
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '52') { //if the 4 key has been pressed
+					if (click == true) { //if the grid has been clicked
+						grid.drawImage(fuel4, chosenX, chosenY); //draw the fuel4 cell at clicked tile
+						fuel4X = chosenX; //set fuel4 x coordinate
+						fuel4Y = chosenY; //set fuel4 y coordinate
+						fuelPlaced = fuelPlaced + 1; //increment number of fuel cells placed
+						click = false; //set click to false
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '53') { //if the 5 key has been pressed
+					if (click == true) { //if the grid has been clicked
+						grid.drawImage(fuel5, chosenX, chosenY); //draw the fuel5 cell at clicked tile
+						fuel5X = chosenX; //set fuel5 x coordinate
+						fuel5Y = chosenY; //set fuel5 y coordinate
+						fuelPlaced = fuelPlaced + 1; //increment number of fuel cells placed
+						click = false; //set click to false
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '54') { //if the 6 key has been pressed
+					if (click == true) { //if the grid has been clicked
+						grid.drawImage(fuel6, chosenX, chosenY); //draw the fuel6 cell at clicked tile
+						fuel6X = chosenX; //set fuel6 x coordinate
+						fuel6Y = chosenY; //set fuel6 y coordinate
+						fuelPlaced = fuelPlaced + 1; //increment number of fuel cells placed
+						click = false; //set click to false
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '55') { //if the 7 key has been pressed
+					if (click == true) { //if the grid has been clicked
+						grid.drawImage(fuel7, chosenX, chosenY); //draw the fuel7 cell at clicked tile
+						fuel7X = chosenX; //set fuel7 x coordinate
+						fuel7Y = chosenY; //set fuel7 y coordinate
+						fuelPlaced = fuelPlaced + 1; //increment number of fuel cells placed
+						click = false; //set click to false
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '56') { //if the 8 key has been pressed
+					if (click == true) { //if the grid has been clicked
+						grid.drawImage(fuel8, chosenX, chosenY); //draw the fuel8 cell at clicked tile
+						fuel8X = chosenX; //set fuel8 x coordinate
+						fuel8Y = chosenY; //set fuel8 y coordinate
+						fuelPlaced = fuelPlaced + 1; //increment number of fuel cells placed
+						click = false; //set click to false
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '57') { //if the 9 key has been pressed
+					if (click == true) { //if the grid has been clicked
+						grid.drawImage(fuel9, chosenX, chosenY); //draw the fuel9 cell at clicked tile
+						fuel9X = chosenX; //set fuel9 x coordinate
+						fuel9Y = chosenY; //set fuel9 y coordinate
+						fuelPlaced = fuelPlaced + 1; //increment number of fuel cells placed
+						click = false; //set click to false
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '87') { //if the W key has been pressed
+					if (gameStart == true) { //if the game has been started
+						if (fuel == 0 || fuelPlaced == 0) { //if the sub runs out of fuel or there is no fuel on the board
+							end(); //call end function
+						}
+						else if (subY == 0) { //if the sub is on the top row
+							robotTurn(); //call robotTurn function
+							error(); //call error function
+						}
+						else if (subY - 50 == obstacleY && subX == obstacleX) { //if the sub is below an obstacle
+							robotTurn(); //call robotTurn function
+							error(); //call error function
+						}
+						else {
+							grid.drawImage(sub, subX, subY - 50); //move the sub up on the grid
+							grid.drawImage(tile, subX, subY); //draw an empty tile where the sub was
+							subY = subY - 50; //change the subs y coordinate
+							fuelCell(); //call fuelCell function
+							fuel = fuel - 1; //decrement the amount of fuel the sub has left
+							robotTurn(); //call robotTurn function
+							document.getElementById("fuel").innerHTML = fuel; //update the amount of fuel in the stats
+						}
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '88') { //if the X key has been pressed
+					if (gameStart == true) { //if the game has ben started
+						if (fuel == 0 || fuelPlaced == 0) {  //if the sub runs out of fuel or there is no fuel on the board
+							end(); //call end function
+						}
+						else if (subY == 450) { //if the sub is on the bottom row
+							robotTurn(); //call robotTurn function
+							error(); //call error function
+						}
+						else if (subY + 50 == obstacleY && subX == obstacleX) { //if the sub is on top of an obstacle
+							robotTurn(); //call robotTurn function
+							error(); //call error function
+						}
+						else {
+							grid.drawImage(sub, subX, subY + 50); //move the sub down on the grid
+							grid.drawImage(tile, subX, subY); //draw an empty tile where the sub was
+							subY = subY + 50; //chnage the subs y coordinate
+							fuelCell(); //call fuelCell function
+							fuel = fuel - 1; //decrement the amount of fuel the sub has left
+							robotTurn(); //call robotTurn function
+							document.getElementById("fuel").innerHTML = fuel; //update the amount of fuel in the stats
+						}
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '65') { //if the A key has been pressed
+					if (gameStart == true) { //if the game has been started
+						if (fuel == 0 || fuelPlaced == 0) {  //if the sub runs out of fuel or there is no fuel on the board
+							end(); //call end function
+						}
+						else if (subX == 0) { //if the sub is in the first column
+							robotTurn(); //call robotTurn function
+							error(); //call error function
+						}
+						else if (subX - 50 == obstacleX && subY == obstacleY) { //if the sub is next to an obstacle
+							robotTurn(); //call robotTurn function
+							error(); //call error function
+						}
+						else {
+							grid.drawImage(sub, subX - 50, subY); //move the sub to the left
+							grid.drawImage(tile, subX, subY); //draw an empty tile where the sub was
+							subX = subX - 50; //change the subs x coordinate
+							fuelCell(); //call fuelCell function
+							fuel = fuel - 1; //decrement the amount of fuel the sub has left
+							robotTurn(); //call robotTurn function
+							document.getElementById("fuel").innerHTML = fuel; //update the amount of fuel in the stats
+						}
+					}
+					else {
+						error(); //call error function
+					}
+				}
+				else if (e.keyCode == '68') { //if the D key has been pressed
+					if (gameStart == true) { //if the game has been started
+						if (fuel == 0 || fuelPlaced == 0) {  //if the sub runs out of fuel or there is no fuel on the board
+							end(); //call end function
+						}
+						else if (subX == 450) { //if the sub is in the last column
+							robotTurn(); //call robotTurn function
+							error(); //call error function
+						}
+						else if (subX + 50 == obstacleX && subY == obstacleY) { //if the sub is next to an obstacle
+							robotTurn(); //call robotTurn function
+							error(); //call error function
+						}
+						else {
+							grid.drawImage(sub, subX + 50, subY); //move the sub to the right
+							grid.drawImage(tile, subX, subY); //draw an empty tile where the sub was
+							subX = subX + 50; //change the subs x coordinate
+							fuelCell(); //call fuelCell function
+							fuel = fuel - 1; //decrement the amount of fuel the sub has left
+							robotTurn(); //call robotTurn function
+							document.getElementById("fuel").innerHTML = fuel; //update the amount of fuel in the stats
+						}
+					}
+					else {
+						error(); //call error function
+					}
+				}
+			}
+			
+			function robotTurn() { //function to move the enemy sub
+				var enemyMove = Math.floor(Math.random()*4+1); //var to get a random number between 1 and 4
+				if (enemyX == subX + 50 && enemyY == subY) { //if the enemy is next to the sub
+					grid.drawImage(enemy, enemyX - 50, enemyY); //move the enemy sub to the left
+					grid.drawImage(tile, enemyX, enemyY); //draw an empty tile where the enemy was
+					enemyX = enemyX - 50; //change the enemys x coordinate
+					compScore = compScore + 100; //increment the comps score by 100
+					document.getElementById("compScore").innerHTML = compScore; //update the comp score in the stats
+					end(); //calling the end function
+				}
+				else if (enemyX == subX - 50 && enemyY == subY) { //if the enemy is next to the sub
+					grid.drawImage(enemy, enemyX + 50, enemyY); //move the enemy sub to the right
+					grid.drawImage(tile, enemyX, enemyY); //draw an empty tile where the enemy was
+					enemyX = enemyX + 50; //change the enemys x coordinate
+					compScore = compScore + 100; //increment the comps score by 100
+					document.getElementById("compScore").innerHTML = compScore; //update the comp score in the stats
+					end(); //calling the end function
+				}
+				else if (enemyX == subX && enemyY == subY + 50) { //if the enemy is below the sub
+					grid.drawImage(enemy, enemyX, enemyY - 50); //move the enemy sub up
+					grid.drawImage(tile, enemyX, enemyY); //draw an empty tile where the enemy was
+					enemyY = enemyY - 50; //change the enemy y coordinate
+					compScore = compScore + 100; //increment the comps score by 100
+					document.getElementById("compScore").innerHTML = compScore; //update the comp score in the stats
+					end(); //calling the end function
+				}
+				else if (enemyX == subX && enemyY == subY - 50) { //if the enemy is on top of the sub
+					grid.drawImage(enemy, enemyX, enemyY + 50); //move the enemy down
+					grid.drawImage(tile, enemyX, enemyY); //draw an empty tile where the enemy was
+					enemyY = enemyY + 50; //change the enemy y coordinate
+					compScore = compScore + 100; //increment the comps score by 100
+					document.getElementById("compScore").innerHTML = compScore; //update the comp score in the stats
+					end(); //calling the end function
+				}
+				else if (enemyMove == 1) { //if the random number is 1
+					if ((enemyY == 0) || (enemyY - 50 == obstacleY && enemyX == obstacleX)) { //if the enemy is on the top row
+						grid.drawImage(enemy, enemyX, enemyY + 50); //move the enemy down
+						grid.drawImage(tile, enemyX, enemyY); //draw an empty tile where the enemy was
+						enemyY = enemyY + 50; //change the enemy y coordinate
+						enemyFuel(); //calling enemyFuel function
+					}
+					else {
+						grid.drawImage(enemy, enemyX, enemyY - 50); //move the enemy up
+						grid.drawImage(tile, enemyX, enemyY); //draw an empty tile where the enemy was
+						enemyY = enemyY - 50; //change the enemy y coordinate
+						enemyFuel(); //calling enemyFuel function
+					}
+				}
+				else if (enemyMove == 2) { //if the random number is 2
+					if ((enemyX == 0) || (enemyX - 50 == obstacleX && enemyY == obstacleY)) { //if the enemy is in the first column
+						grid.drawImage(enemy, enemyX + 50, enemyY); //move the enemy to the right
+						grid.drawImage(tile, enemyX, enemyY); //draw an empty tile where the enemy was
+						enemyX = enemyX + 50; //change the enemy x coordinate
+						enemyFuel(); //calling enemyFuel function
+					}
+					else {
+						grid.drawImage(enemy, enemyX - 50, enemyY); //move the enemy to the left
+						grid.drawImage(tile, enemyX, enemyY); //draw an empty tile where the enemy was
+						enemyX = enemyX - 50; //change the enemy x coordinate
+						enemyFuel(); //calling enemyFuel function
+					}
+				}
+				else if (enemyMove == 3) { //if the random number is 3
+					if ((enemyX == 450) || (enemyX + 50 == obstacleX && enemyY == obstacleY)) { //if the enemy is in the last column
+						grid.drawImage(enemy, enemyX - 50, enemyY);  //move the enemy to the left
+						grid.drawImage(tile, enemyX, enemyY); //draw an empty tile where the enemy was
+						enemyX = enemyX - 50; //change the enemy x coordinate
+						enemyFuel(); //calling enemyFuel function
+					}
+					else {
+						grid.drawImage(enemy, enemyX + 50, enemyY); //move the enemy to the right
+						grid.drawImage(tile, enemyX, enemyY); //draw an empty tile where the enemy was
+						enemyX = enemyX + 50; //change the enemy x coordinate
+						enemyFuel(); //calling enemyFuel function
+					}
+				}
+				else if (enemyMove == 4) { //if the random number is 4
+					if ((enemyY == 450) || (enemyY + 50 == obstacleY && enemyX == obstacleX)) { //if the enemy is in the bottom row
+						grid.drawImage(enemy, enemyX, enemyY - 50); //move the enemy up
+						grid.drawImage(tile, enemyX, enemyY); //draw an empty tile where the enemy was
+						enemyY = enemyY - 50; //change the enemy y coordinate
+						enemyFuel(); //calling enemyFuel function
+					}
+					else {
+						grid.drawImage(enemy, enemyX, enemyY + 50); //move the enemy down
+						grid.drawImage(tile, enemyX, enemyY); //draw an empty tile where the enemy was
+						enemyY = enemyY + 50; //change the enemy y coordinate
+						enemyFuel(); //calling enemyFuel function
+					}
+				}
+				round = round + 1; //increment the round number
+				document.getElementById("round").innerHTML = round; //update the round number in the stats
+			}
+			
+			function enemyFuel() { //what happens when an enemy is on top of a fuel cell
+				if (enemyX == fuel1X && enemyY == fuel1Y) { //if the enemy is on fuel cell 1
+					fuel1X = null; //set the x coordinate to null
+					fuel1Y = null; //set the y coordinate to null
+					compScore = compScore + 1; //add fuel value to comp score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("compScore").innerHTML = compScore; //update the comp score in stats
+				}
+				else if (enemyX == fuel2X && enemyY == fuel2Y) { //if the enemy is on fuel cell 2
+					fuel2X = null; //set the x coordinate to null
+					fuel2Y = null; //set the y coordinate to null
+					compScore = compScore + 2; //add fuel value to comp score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("compScore").innerHTML = compScore; //update the comp score in stats
+				}
+				else if (enemyX == fuel3X && enemyY == fuel3Y) { //if the enemy is on fuel cell 3
+					fuel3X = null; //set the x coordinate to null
+					fuel3Y = null; //set the y coordinate to null
+					compScore = compScore + 3; //add fuel value to comp score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("compScore").innerHTML = compScore; //update the comp score in stats
+				}
+				else if (enemyX == fuel4X && enemyY == fuel4Y) { //if the enemy is on fuel cell 4
+					fuel4X = null; //set the x coordinate to null
+					fuel4Y = null; //set the y coordinate to null
+					compScore = compScore + 4; //add fuel value to comp score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("compScore").innerHTML = compScore; //update the comp score in stats
+				}
+				else if (enemyX == fuel5X && enemyY == fuel5Y) { //if the enemy is on fuel cell 5
+					fuel5X = null; //set the x coordinate to null
+					fuel5Y = null; //set the y coordinate to null
+					compScore = compScore + 5; //add fuel value to comp score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById(compScore).innerHTML = compScore; //update the comp score in stats
+				}
+				else if (enemyX == fuel6X && enemyY == fuel6Y) { //if the enemy is on fuel cell 6
+					fuel6X = null; //set the x coordinate to null
+					fuel6Y = null; //set the y coordinate to null
+					compScore = compScore + 6; //add fuel value to comp score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById(compScore).innerHTML = compScore; //update the comp score in stats
+				}
+				else if (enemyX == fuel7X && enemyY == fuel7Y) { //if the enemy is on fuel cell 7
+					fuel7X = null; //set the x coordinate to null
+					fuel7Y = null; //set the y coordinate to null
+					compScore = compScore + 7; //add fuel value to comp score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("compScore").innerHTML = compScore; //update the comp score in stats
+				}
+				else if (enemyX == fuel8X && enemyY == fuel8Y) { //if the enemy is on fuel cell 8
+					fuel8X = null; //set the x coordinate to null
+					fuel8Y = null; //set the y coordinate to null
+					compScore = compScore + 8; //add fuel value to comp score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("compScore").innerHTML = compScore; //update the comp score in stats
+				}
+				else if (enemyX == fuel9X && enemyY == fuel9Y) { //if the enemy is on fuel cell 9
+					fuel9X = null; //set the x coordinate to null
+					fuel9Y = null; //set the y coordinate to null
+					compScore = compScore + 9; //add fuel value to comp score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("compScore").innerHTML = compScore; //update the comp score in stats
+				}
+			}
+			
+			function fuelCell() { //what happens when the sub is on top of a fuel cell
+				if (subX == fuel1X && subY == fuel1Y) { //if the sub is on fuel cell 1
+					fuel = fuel + 1; //add the fuel value to the subs fuel
+					fuel1X = null; //set the x coordinate to null
+					fuel1Y = null; //set the y coordinate to null
+					score = score + 1; //add fuel value to score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("score").innerHTML = score; //update the score in stats
+				}
+				else if (subX == fuel2X && subY == fuel2Y) { //if the sub is on fuel cell 2
+					fuel = fuel + 2; //add the fuel value to the subs fuel
+					fuel2X = null; //set the x coordinate to null
+					fuel2Y = null; //set the y coordinate to null
+					score = score + 2; //add fuel value to score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("score").innerHTML = score; //update the score in stats
+				}
+				else if (subX == fuel3X && subY == fuel3Y) { //if the sub is on fuel cell 3
+					fuel = fuel + 3; //add the fuel value to the subs fuel
+					fuel3X = null; //set the x coordinate to null
+					fuel3Y = null; //set the y coordinate to null
+					score = score + 3; //add fuel value to score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("score").innerHTML = score; //update the score in stats
+				}
+				else if (subX == fuel4X && subY == fuel4Y) { //if the sub is on fuel cell 4
+					fuel = fuel + 4; //add the fuel value to the subs fuel
+					fuel4X = null; //set the x coordinate to null
+					fuel4Y = null; //set the y coordinate to null
+					score = score + 4; //add fuel value to score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("score").innerHTML = score; //update the score in stats
+				}
+				else if (subX == fuel5X && subY == fuel5Y) { //if the sub is on fuel cell 5
+					fuel = fuel + 5; //add the fuel value to the subs fuel
+					fuel5X = null; //set the x coordinate to null
+					fuel5Y = null; //set the y coordinate to null
+					score = score + 5; //add fuel value to score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("score").innerHTML = score; //update the score in stats
+				}
+				else if (subX == fuel6X && subY == fuel6Y) { //if the sub is on fuel cell 6
+					fuel = fuel + 6; //add the fuel value to the subs fuel
+					fuel6X = null; //set the x coordinate to null
+					fuel6Y = null; //set the y coordinate to null
+					score = score + 6; //add fuel value to score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("score").innerHTML = score; //update the score in stats
+				} 
+				else if (subX == fuel7X && subY == fuel7Y) { //if the sub is on fuel cell 7
+					fuel = fuel + 7; //add the fuel value to the subs fuel
+					fuel7X = null; //set the x coordinate to null
+					fuel7Y = null; //set the y coordinate to null
+					score = score + 7; //add fuel value to score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("score").innerHTML = score; //update the score in stats
+				}
+				else if (subX == fuel8X && subY == fuel8Y) { //if the sub is on fuel cell 8
+					fuel = fuel + 8; //add the fuel value to the subs fuel
+					fuel8X = null; //set the x coordinate to null
+					fuel8Y = null; //set the y coordinate to null
+					score = score + 8; //add fuel value to score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("score").innerHTML = score; //update the score in stats
+				}
+				else if (subX == fuel9X && subY == fuel9Y) { //if the sub is on fuel cell 9
+					fuel = fuel + 9; //add the fuel value to the subs fuel
+					fuel9X = null; //set the x coordinate to null
+					fuel9Y = null; //set the y coordinate to null
+					score = score + 9; //add fuel value to score
+					fuelPlaced = fuelPlaced - 1; //decrement the number of fuel placed
+					document.getElementById("score").innerHTML = score; //update the score in stats
+				}
+			}
+			
+			window.onerror = function error() { //what happens when an error is found
+				alert('Error'); //alert stating error
+			}
+			
+			function start() { //what happens when the start game button is pressed
+				if (subPlaced == true) { //if a sub has been placed
+					gameStart = true; //set gameStart to true
+				}
+				else {
+					error(); //call error function
+				}
+			}
+			
+			function end() { //what happens when the game is ended
+				gameStart = false; //set gameStart to false
+				document.getElementById('final').style.display = "block"; //display the end game screen
+				document.getElementById("finalRound").innerHTML = round; //display the final round number
+				document.getElementById("finalFuel").innerHTML = fuel; //display the final fuel amount
+				document.getElementById("finalScore").innerHTML = score; //display the final score
+				document.getElementById("finalCompScore").innerHTML = compScore; //display the final comp score
+				if (score > compScore) { //if the user score is greater than the comp score
+					document.getElementById("result").innerHTML = "Win"; //print win
+				}
+				else if (score < compScore) { //if the user score is less than the comp score
+					document.getElementById("result").innerHTML = "Lose"; //print lose
+				}
+				else {
+					document.getElementById("result").innerHTML = "Draw"; //prtin draw
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div class="container">
+<!-- Grid --->
+			<canvas id="game" width="500" height="500"></canvas>
+<!-- End game screen -->
+			<div id="final">
+				<br><br>
+				<h1><u>Game Over</u></h1><br><br>
+				<h1><u><span id="result"></span></u></h1><br><br>
+				<h2>Rounds: <span id="finalRound"></span></h2><br>
+				<h2>Fuel remaining: <span id="finalFuel"></span></h2><br>
+				<h2>Score: <span id="finalScore"></span></h2><br>
+				<h2>Computer Score: <span id="finalCompScore"></span></h2><br><br><br>
+				<p>Press the reset button to play again</p>
+			</div>
+<!-- Instructions -->
+			<div class="head">
+				<h1>COMP284 - Assignment 3</h1><br>
+				<h2>Adam Hawkins - 201155225</h2><br>
+				<h3><u>Setting up the board</u></h3>
+				<p>Click on a tile and press one of the following:</p>
+				<p>Place user sub: <b>U</b></p>
+				<p>Place enemy sub: <b>K</b></p>
+				<p>Place obstacle: <b>O</b></p>
+				<p>Place amount of fuel: <b>1 - 9</b></p>
+			</div>
+<!-- Controls -->
+			<div class="control">
+				<h3><u>Controls</u></h3>
+				<p>Up: <b>W</b></p>
+				<p>Left: <b>A</b></p>
+				<p>Right: <b>D</b></p>
+				<p>Down: <b>X</b></p>
+			</div>
+<!-- Key -->
+			<div class="key">
+				<h3><u>Key</u></h3><br>
+				<table border='1'>
+					<tr>
+						<th>Sub</th>
+						<th>Enemy</th>
+						<th>Obstacle</th>
+						<th>Fuel</th>
+					</tr>
+					<tr>
+						<td><img src="sub.png"></td>
+						<td><img src="enemy.png"></td>
+						<td><img src="obstacle.png"></td>
+						<td><img src="fuel.png"></td>
+					</tr>
+				</table>
+			</div>
+<!-- Stats -->
+			<div class="stats">
+				<p><b>| Round: <span id="round"></span> | Fuel left: <span id="fuel"></span> | Score: <span id="score"></span> | Comp Score: <span id="compScore"></span> |</b></p>
+			</div>
+<!-- Play and end buttons -->
+			<div class="play">
+				<input type="button" class="playButton" value="Start game" onclick="start()">
+				<input type="button" class="endButton" value="End game" onclick="end()">
+				<input type="button" class="resetButton" value="Reset" onclick="window.location.reload()">
+			</div>
+		</div>
+	</body>
+</html>
