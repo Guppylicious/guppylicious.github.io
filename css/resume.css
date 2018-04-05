@@ -180,3 +180,7 @@ a:hover, a:focus, a:active {
 	width: 192px;
 	height: 80px;
 }
+
+#project {
+	width: 500px;
+}
