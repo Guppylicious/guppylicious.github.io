@@ -1,0 +1,18 @@
+---
+# ==== extracting IDs from strings
+
+# ---- patterns
+patterns:
+
+   - '/^[A-Za-z0-9\d=!\-@._*]*$/'
+
+
+# ---- strings to match
+strings:
+
+
+   # ---- ought to pass
+
+   -   value: Uz8^2AcUKfXz
+       expected: true
+

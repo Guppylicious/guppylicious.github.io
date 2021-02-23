@@ -1,0 +1,145 @@
+h1, h3, h4 {
+    text-align: center;
+}
+
+.mainContainer {
+    width: 1830px;
+    height: 830px;
+    margin: auto;
+    padding: 10px;
+}
+
+/* Controls styles */
+
+.controls {
+    border: #000 3px solid;
+    background: #DDD;
+    float: left;
+    width: 30%;
+    height: 100%;
+}
+
+.optionTable {
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.optionButton {
+    height: 50px;
+    font-weight: bold;
+}
+.cardTable {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.cardPile {
+    width: 230px;
+    height: 353px;
+    background: #FFF;
+    float: left;
+    border: #000 3px solid;
+    margin: 0 auto;
+}
+
+.drawnCard {
+    width: 230px;
+    height: 353px;
+    background: #FFF;
+    border: #000 3px solid;
+    margin: 0 auto;
+}
+
+.controlTable {
+    width: 70%;
+    padding-top: 10px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.controlButton {
+    width: 130px;
+    height: 50px;
+    font-weight: bold;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.scoreTable {
+    width: 50%;
+    padding-top: 30px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.backsTable {
+    width: 95%;
+    padding-top: 40px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.backsButton {
+    width: 67px;
+    height: 100px;
+}
+
+#greyBack {
+    background-image: url('../img/backs/grey_back.png');
+    background-size: cover;
+}
+#blueBack {
+    background-image: url('../img/backs/blue_back.png');
+    background-size: cover;
+}
+#greenBack {
+    background-image: url('../img/backs/green_back.png');
+    background-size: cover;
+}
+#redBack {
+    background-image: url('../img/backs/red_back.png');
+    background-size: cover;
+}
+#purpleBack {
+    background-image: url('../img/backs/purple_back.png');
+    background-size: cover;
+}
+#yellowBack {
+    background-image: url('../img/backs/yellow_back.png');
+    background-size: cover;
+}
+
+/* Board styles */
+
+.board {
+    border: #000 3px solid;
+    width: 70%;
+    height: 100%;
+    margin-left: 30%;
+    background: #2a8542;
+    color: #FFF;
+}
+
+.dealtTable {
+    margin: 0 auto;
+    color: #FFF;
+}
+
+.dealtCell {
+    width: 80px;
+    height: 130px;
+    border: #FFF 2px solid;
+    border-radius: 8px;
+}
+
+.dealtNo {
+    padding-bottom: 10px;
+}
+
+.dealtSuit {
+    text-align: right;
+    padding-right: 10px;
+}

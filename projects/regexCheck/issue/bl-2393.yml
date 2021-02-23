@@ -1,0 +1,39 @@
+---
+# ==== extracting IDs from strings
+
+# ---- patterns
+patterns:
+
+   - '/({clubslug})/'
+
+
+# ---- strings to match
+strings:
+
+
+   # ---- ought to pass
+
+   -   value: https:://www.test.com/{clubslug}/test
+       expected: true
+
+   -   value: https:://www.test.com/{clubslug}
+       expected: true
+
+   -   value: https:://www.test.com/{clubslug}/
+       expected: true
+
+   -   value: https:://www.test.com/
+       expected: false
+
+   -   value: https:://www.test.com
+       expected: false
+
+   -   value: https:://www.test.com/{clubslug/
+       expected: false
+
+   -   value: https:://www.test.com/clubslug}/
+       expected: false
+
+   -   value: https:://www.test.com/clubslug/
+       expected: false
+
