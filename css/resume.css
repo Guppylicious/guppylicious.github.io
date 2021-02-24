@@ -181,7 +181,23 @@ a:hover, a:focus, a:active {
 	height: 80px;
 }
 
-#project {
+#flightSeats {
 	width: 700px;
 	height: 300px;
+}
+
+#highLow {
+	width: 800px;
+}
+
+#pokeBattle {
+	width: 800px;
+}
+
+#pokeDex {
+	width: 800px;
+}
+
+#regex {
+	width: 800px;
 }
